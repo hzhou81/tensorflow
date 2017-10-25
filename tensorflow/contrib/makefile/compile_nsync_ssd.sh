@@ -22,7 +22,7 @@ set -e
 prog=compile_nsync.sh
 android_api_version=21
 default_android_arch=armeabi-v7a
-default_ios_arch="x86_64 arm64"
+default_ios_arch="x86_64 arm64 i386 armv7 armv7s"
 
 usage="usage: $prog [-t linux|ios|android|macos|native]
         [-a architecture] [-v android_api_version]
