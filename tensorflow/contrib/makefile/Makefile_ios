@@ -274,6 +274,7 @@ $(TARGET_NSYNC_LIB) \
 	LDFLAGS := \
 -march=armv7-a \
 -L$(MAKEFILE_DIR)/gen/protobuf/lib \
+-L$(MAKEFILE_DIR)/gen/nsync \
 -L$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a \
 -fPIE \
 -pie \
@@ -340,6 +341,7 @@ ifeq ($(TARGET),IOS)
 		-Xlinker -dead_strip \
 		-all_load \
 		-L$(GENDIR)protobuf_ios/lib \
+        -L$(GENDIR)nsync \
 		-lz
 	endif
 	ifeq ($(IOS_ARCH),ARMV7S)
@@ -363,6 +365,7 @@ ifeq ($(TARGET),IOS)
 		-Xlinker -dead_strip \
 		-all_load \
 		-L$(GENDIR)protobuf_ios/lib \
+        -L$(GENDIR)nsync \
 		-lz
 	endif
 	ifeq ($(IOS_ARCH),ARM64)
@@ -385,6 +388,7 @@ ifeq ($(TARGET),IOS)
 		-Xlinker -dead_strip \
 		-all_load \
 		-L$(GENDIR)protobuf_ios/lib \
+        -L$(GENDIR)nsync \
 		-lz
 	endif
 	ifeq ($(IOS_ARCH),I386)
@@ -408,6 +412,7 @@ ifeq ($(TARGET),IOS)
 		-Xlinker -dead_strip \
 		-all_load \
 		-L$(GENDIR)protobuf_ios/lib \
+        -L$(GENDIR)nsync \
 		-lz
 	endif
 	ifeq ($(IOS_ARCH),X86_64)
@@ -430,6 +435,7 @@ ifeq ($(TARGET),IOS)
 		-Xlinker -dead_strip \
 		-all_load \
 		-L$(GENDIR)protobuf_ios/lib \
+        -L$(GENDIR)nsync \
 		-lz
 	endif
 	OBJDIR := $(OBJDIR)ios_$(IOS_ARCH)/
