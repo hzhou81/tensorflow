@@ -51,16 +51,19 @@
 "ExpandDimsOp",
 "FillOp<CPUDevice, ::tensorflow::int32>",
 "FillOp<CPUDevice, float>",
+"FusedBatchNormOp<CPUDevice, float, float>",
 "GatherOp<CPUDevice, float, int32>",
 "BinaryOp< CPUDevice, functor::greater<float>>",
 "BinaryOp< CPUDevice, functor::greater<int32>>",
 "BinaryOp< CPUDevice, functor::greater_equal<int32>>",
 "IdentityOp",
-"BinaryOp< CPUDevice, functor::less<int32>>",
+"BinaryOp< CPUDevice, functor::less< int32>>",
 "BinaryOp<CPUDevice, functor::logical_and>",
 "LoopCondOp",
+"BinaryOp< CPUDevice, functor::maximum<float>>",
+"LoopCondOp",
 "MatMulOp<CPUDevice, float, false >",
-"ReductionOp<CPUDevice, ::tensorflow::int32, Eigen::internal::MaxReducer<::tensorflow::int32>>",
+"ReductionOp<CPUDevice, ::tensorflow::int32,Eigen::internal::MaxReducer<::tensorflow::int32>>",
 "MaxPoolingOp<CPUDevice, float>",
 "BinaryOp< CPUDevice, functor::maximum<float>>",
 "ReductionOp<CPUDevice, float, Eigen::internal::MeanReducer<float>>",
@@ -72,6 +75,7 @@
 "NextIterationOp",
 "NoOp",
 "NonMaxSuppressionOp<CPUDevice>",
+"NonMaxSuppressionV2Op<CPUDevice>",
 "PackOp<CPUDevice, ::tensorflow::int32>",
 "PackOp<CPUDevice, float>",
 "PadOp<CPUDevice, float>",
@@ -99,16 +103,19 @@
 "BinaryOp< CPUDevice, functor::sub<float>>",
 "BinaryOp< CPUDevice, functor::sub<int32>>",
 "SwitchOp",
+"TensorArrayPackOrGatherOp<CPUDevice, ::tensorflow::int32, false >",
 "TensorArrayPackOrGatherOp<CPUDevice, float, false >",
+"TensorArrayReadOp<CPUDevice, ::tensorflow::int32>",
 "TensorArrayReadOp<CPUDevice, float>",
+"TensorArrayUnpackOrScatterOp<CPUDevice, ::tensorflow::int32, false >",
 "TensorArrayUnpackOrScatterOp<CPUDevice, float, false >",
 "TensorArraySizeOp",
 "TensorArrayOp",
+"TensorArrayWriteOp<CPUDevice, ::tensorflow::int32>",
 "TensorArrayWriteOp<CPUDevice, float>",
 "TileOp<CPUDevice>",
 "TopK<CPUDevice, float>",
 "TransposeCpuOp",
-"UnpackOp<CPUDevice, ::tensorflow::int32>",
 "UnpackOp<CPUDevice, float>",
 "WhereCPUOp",
 "ZerosLikeOp< CPUDevice, float>",
@@ -138,6 +145,7 @@ constexpr inline bool ShouldRegisterOp(const char op[]) {
      || isequal(op, "Exp")
      || isequal(op, "ExpandDims")
      || isequal(op, "Fill")
+     || isequal(op, "FusedBatchNorm")
      || isequal(op, "Gather")
      || isequal(op, "Greater")
      || isequal(op, "GreaterEqual")
@@ -156,8 +164,8 @@ constexpr inline bool ShouldRegisterOp(const char op[]) {
      || isequal(op, "NextIteration")
      || isequal(op, "NoOp")
      || isequal(op, "NonMaxSuppression")
+     || isequal(op, "NonMaxSuppressionV2")
      || isequal(op, "Pack")
-     || isequal(op, "Pad")
      || isequal(op, "Placeholder")
      || isequal(op, "Range")
      || isequal(op, "Rank")

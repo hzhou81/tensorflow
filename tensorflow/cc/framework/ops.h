@@ -17,6 +17,7 @@ limitations under the License.
 #define THIRD_PARTY_TENSORFLOW_CC_FRAMEWORK_OPS_H_
 
 #include <type_traits>
+//#include "tensorflow/contrib/makefile/downloads/protobuf/src/google/protobuf/stubs/type_traits.h"
 
 #include "tensorflow/core/framework/tensor.h"
 #include "tensorflow/core/framework/tensor.pb.h"
