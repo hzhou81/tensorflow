@@ -72,66 +72,66 @@ then
 fi
 
 #编译x86_64
-make distclean
-./configure \
---host=x86_64-apple-${OSX_VERSION} \
---disable-shared \
---enable-cross-compile \
---with-protoc="${PROTOC_PATH}" \
---prefix=${LIBDIR}/iossim_x86_64 \
---exec-prefix=${LIBDIR}/iossim_x86_64 \
-"CFLAGS=${CFLAGS} \
--mios-simulator-version-min=${MIN_SDK_VERSION} \
--arch x86_64 \
--fembed-bitcode \
--isysroot ${IPHONESIMULATOR_SYSROOT}" \
-"CXX=${CXX}" \
-"CXXFLAGS=${CXXFLAGS} \
--mios-simulator-version-min=${MIN_SDK_VERSION} \
--arch x86_64 \
--fembed-bitcode \
--isysroot \
-${IPHONESIMULATOR_SYSROOT}" \
-LDFLAGS="-arch x86_64 \
--fembed-bitcode \
--mios-simulator-version-min=${MIN_SDK_VERSION} \
-${LDFLAGS} \
--L${IPHONESIMULATOR_SYSROOT}/usr/lib/ \
--L${IPHONESIMULATOR_SYSROOT}/usr/lib/system" \
-"LIBS=${LIBS}"
-make -j"${JOB_COUNT}"
-make install
+#make distclean
+#./configure \
+#--host=x86_64-apple-${OSX_VERSION} \
+#--disable-shared \
+#--enable-cross-compile \
+#--with-protoc="${PROTOC_PATH}" \
+#--prefix=${LIBDIR}/iossim_x86_64 \
+#--exec-prefix=${LIBDIR}/iossim_x86_64 \
+#"CFLAGS=${CFLAGS} \
+#-mios-simulator-version-min=${MIN_SDK_VERSION} \
+#-arch x86_64 \
+#-fembed-bitcode \
+#-isysroot ${IPHONESIMULATOR_SYSROOT}" \
+#"CXX=${CXX}" \
+#"CXXFLAGS=${CXXFLAGS} \
+#-mios-simulator-version-min=${MIN_SDK_VERSION} \
+#-arch x86_64 \
+#-fembed-bitcode \
+#-isysroot \
+#${IPHONESIMULATOR_SYSROOT}" \
+#LDFLAGS="-arch x86_64 \
+#-fembed-bitcode \
+#-mios-simulator-version-min=${MIN_SDK_VERSION} \
+#${LDFLAGS} \
+#-L${IPHONESIMULATOR_SYSROOT}/usr/lib/ \
+#-L${IPHONESIMULATOR_SYSROOT}/usr/lib/system" \
+#"LIBS=${LIBS}"
+#make -j"${JOB_COUNT}"
+#make install
 
 #编译i386
-make distclean
-./configure \
---host=i386-apple-${OSX_VERSION} \
---disable-shared \
---enable-cross-compile \
---with-protoc="${PROTOC_PATH}" \
---prefix=${LIBDIR}/iossim_i386 \
---exec-prefix=${LIBDIR}/iossim_i386 \
-"CFLAGS=${CFLAGS} \
--mios-simulator-version-min=${MIN_SDK_VERSION} \
--arch i386 \
--fembed-bitcode \
--isysroot ${IPHONESIMULATOR_SYSROOT}" \
-"CXX=${CXX}" \
-"CXXFLAGS=${CXXFLAGS} \
--mios-simulator-version-min=${MIN_SDK_VERSION} \
--arch i386 \
--fembed-bitcode \
--isysroot \
-${IPHONESIMULATOR_SYSROOT}" \
-LDFLAGS="-arch i386 \
--fembed-bitcode \
--mios-simulator-version-min=${MIN_SDK_VERSION} \
-${LDFLAGS} \
--L${IPHONESIMULATOR_SYSROOT}/usr/lib/ \
--L${IPHONESIMULATOR_SYSROOT}/usr/lib/system" \
-"LIBS=${LIBS}"
-make -j"${JOB_COUNT}"
-make install
+#make distclean
+#./configure \
+#--host=i386-apple-${OSX_VERSION} \
+#--disable-shared \
+#--enable-cross-compile \
+#--with-protoc="${PROTOC_PATH}" \
+#--prefix=${LIBDIR}/iossim_i386 \
+#--exec-prefix=${LIBDIR}/iossim_i386 \
+#"CFLAGS=${CFLAGS} \
+#-mios-simulator-version-min=${MIN_SDK_VERSION} \
+#-arch i386 \
+#-fembed-bitcode \
+#-isysroot ${IPHONESIMULATOR_SYSROOT}" \
+#"CXX=${CXX}" \
+#"CXXFLAGS=${CXXFLAGS} \
+#-mios-simulator-version-min=${MIN_SDK_VERSION} \
+#-arch i386 \
+#-fembed-bitcode \
+#-isysroot \
+#${IPHONESIMULATOR_SYSROOT}" \
+#LDFLAGS="-arch i386 \
+#-fembed-bitcode \
+#-mios-simulator-version-min=${MIN_SDK_VERSION} \
+#${LDFLAGS} \
+#-L${IPHONESIMULATOR_SYSROOT}/usr/lib/ \
+#-L${IPHONESIMULATOR_SYSROOT}/usr/lib/system" \
+#"LIBS=${LIBS}"
+#make -j"${JOB_COUNT}"
+#make install
 
 #编译arm64(包括iPhone6s | iphone6s plus｜iPhone6｜ iPhone6 plus｜iPhone5S | iPad Air｜ iPad mini2(iPad mini with Retina Display)
 make distclean
@@ -160,71 +160,81 @@ make -j"${JOB_COUNT}"
 make install
 
 #编译armv7(包括iPhone4｜iPhone4S｜iPad｜iPad2｜iPad3(The New iPad)｜iPad mini｜iPod Touch 3G｜iPod Touch4)
-make distclean
-./configure \
---host=arm \
---with-protoc="${PROTOC_PATH}" \
---disable-shared \
---prefix=${LIBDIR}/ios_armv7 \
---exec-prefix=${LIBDIR}/ios_armv7 \
-"CFLAGS=${CFLAGS} \
--miphoneos-version-min=${MIN_SDK_VERSION} \
--arch armv7 \
--fembed-bitcode \
--isysroot ${IPHONEOS_SYSROOT}" \
-"CXXFLAGS=${CXXFLAGS} \
--miphoneos-version-min=${MIN_SDK_VERSION} \
--arch armv7 \
--fembed-bitcode \
--isysroot ${IPHONEOS_SYSROOT}" \
-LDFLAGS="-arch armv7 \
--fembed-bitcode \
--miphoneos-version-min=${MIN_SDK_VERSION} \
-${LDFLAGS}" \
-"LIBS=${LIBS}"
-make -j"${JOB_COUNT}"
-make install
+#make distclean
+#./configure \
+#--host=arm \
+#--with-protoc="${PROTOC_PATH}" \
+#--disable-shared \
+#--prefix=${LIBDIR}/ios_armv7 \
+#--exec-prefix=${LIBDIR}/ios_armv7 \
+#"CFLAGS=${CFLAGS} \
+#-miphoneos-version-min=${MIN_SDK_VERSION} \
+#-arch armv7 \
+#-fembed-bitcode \
+#-isysroot ${IPHONEOS_SYSROOT}" \
+#"CXXFLAGS=${CXXFLAGS} \
+#-miphoneos-version-min=${MIN_SDK_VERSION} \
+#-arch armv7 \
+#-fembed-bitcode \
+#-isysroot ${IPHONEOS_SYSROOT}" \
+#LDFLAGS="-arch armv7 \
+#-fembed-bitcode \
+#-miphoneos-version-min=${MIN_SDK_VERSION} \
+#${LDFLAGS}" \
+#"LIBS=${LIBS}"
+#make -j"${JOB_COUNT}"
+#make install
 
 #编译armv7s(包括iPhone5｜iPhone5C｜iPad4(iPad with Retina Display)
-make distclean
-./configure \
---host=arm \
---with-protoc="${PROTOC_PATH}" \
---disable-shared \
---prefix=${LIBDIR}/ios_armv7s \
---exec-prefix=${LIBDIR}/ios_armv7s \
-"CFLAGS=${CFLAGS} \
--miphoneos-version-min=${MIN_SDK_VERSION} \
--arch armv7s \
--fembed-bitcode \
--isysroot ${IPHONEOS_SYSROOT}" \
-"CXXFLAGS=${CXXFLAGS} \
--miphoneos-version-min=${MIN_SDK_VERSION} \
--arch armv7s \
--fembed-bitcode \
--isysroot ${IPHONEOS_SYSROOT}" \
-LDFLAGS="-arch armv7s \
--fembed-bitcode \
--miphoneos-version-min=${MIN_SDK_VERSION} \
-${LDFLAGS}" \
-"LIBS=${LIBS}"
-make -j"${JOB_COUNT}"
-make install
+#make distclean
+#./configure \
+#--host=arm \
+#--with-protoc="${PROTOC_PATH}" \
+#--disable-shared \
+#--prefix=${LIBDIR}/ios_armv7s \
+#--exec-prefix=${LIBDIR}/ios_armv7s \
+#"CFLAGS=${CFLAGS} \
+#-miphoneos-version-min=${MIN_SDK_VERSION} \
+#-arch armv7s \
+#-fembed-bitcode \
+#-isysroot ${IPHONEOS_SYSROOT}" \
+#"CXXFLAGS=${CXXFLAGS} \
+#-miphoneos-version-min=${MIN_SDK_VERSION} \
+#-arch armv7s \
+#-fembed-bitcode \
+#-isysroot ${IPHONEOS_SYSROOT}" \
+#LDFLAGS="-arch armv7s \
+#-fembed-bitcode \
+#-miphoneos-version-min=${MIN_SDK_VERSION} \
+#${LDFLAGS}" \
+#"LIBS=${LIBS}"
+#make -j"${JOB_COUNT}"
+#make install
+
+#lipo \
+#${LIBDIR}/iossim_x86_64/lib/libprotobuf.a \
+#${LIBDIR}/iossim_i386/lib/libprotobuf.a \
+#${LIBDIR}/ios_arm64/lib/libprotobuf.a \
+#${LIBDIR}/ios_armv7/lib/libprotobuf.a \
+#${LIBDIR}/ios_armv7s/lib/libprotobuf.a \
+#-create \
+#-output ${LIBDIR}/libprotobuf.a
 
 lipo \
-${LIBDIR}/iossim_x86_64/lib/libprotobuf.a \
-${LIBDIR}/iossim_i386/lib/libprotobuf.a \
 ${LIBDIR}/ios_arm64/lib/libprotobuf.a \
-${LIBDIR}/ios_armv7/lib/libprotobuf.a \
-${LIBDIR}/ios_armv7s/lib/libprotobuf.a \
 -create \
 -output ${LIBDIR}/libprotobuf.a
 
+#lipo \
+#${LIBDIR}/iossim_x86_64/lib/libprotobuf-lite.a \
+#${LIBDIR}/iossim_i386/lib/libprotobuf-lite.a \
+#${LIBDIR}/ios_arm64/lib/libprotobuf-lite.a \
+#${LIBDIR}/ios_armv7/lib/libprotobuf-lite.a \
+#${LIBDIR}/ios_armv7s/lib/libprotobuf-lite.a \
+#-create \
+#-output ${LIBDIR}/libprotobuf-lite.a
+
 lipo \
-${LIBDIR}/iossim_x86_64/lib/libprotobuf-lite.a \
-${LIBDIR}/iossim_i386/lib/libprotobuf-lite.a \
 ${LIBDIR}/ios_arm64/lib/libprotobuf-lite.a \
-${LIBDIR}/ios_armv7/lib/libprotobuf-lite.a \
-${LIBDIR}/ios_armv7s/lib/libprotobuf-lite.a \
 -create \
 -output ${LIBDIR}/libprotobuf-lite.a

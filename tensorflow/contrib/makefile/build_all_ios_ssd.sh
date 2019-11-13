@@ -30,7 +30,7 @@ cd ${SCRIPT_DIR}/../../../
 
 # Remove any old files first.
 make -f tensorflow/contrib/makefile/Makefile_ios clean
-rm -rf tensorflow/contrib/makefile/downloads
+#rm -rf tensorflow/contrib/makefile/downloads
 
 # Setting a deployment target is required for building with bitcode,
 # otherwise linking will fail with:
@@ -43,7 +43,7 @@ fi
 
 
 # Pull down the required versions of the frameworks we need.
-tensorflow/contrib/makefile/download_dependencies.sh
+#tensorflow/contrib/makefile/download_dependencies.sh
 
 # Compile protobuf for the target iOS device architectures.
 tensorflow/contrib/makefile/compile_ios_protobuf_ssd.sh
