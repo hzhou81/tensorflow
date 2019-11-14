@@ -2370,22 +2370,35 @@ void ExecutorState::CleanupFramesIterations(FrameState* frame, int64 iter,
   }
 }
 
+//这里对计算完的这个taggednode,循环每一条输出边，把修改这条边的终结点的pending和dead 计数，
+//拷贝输出作为这个节点的输入，如果这个dst 节点is ready 则放如ready 队列。
 void ExecutorState::FrameState::ActivateNodes(const NodeItem* item,
                                               const bool is_dead, int64 iter,
                                               EntryVector* outputs,
                                               TaggedNodeSeq* ready) {
+  //GraphView 和 NodeItem 分别表示计算图和图中的一个节点，
+  //在计算图执行的过程中不会更改状态
   const GraphView& gview = executor->gview_;
+  //拿到iter 对应的IterationState
   IterationState* iter_state = GetIteration(iter);
+  //从NodeItem 拿到输出边的信息
   const size_t num_output_edges = item->num_output_edges;
   const EdgeInfo* edges = item->output_edge_list();
+  //从iter_state 拿到Entry数组 的起始指针
   Entry* input_tensors = iter_state->input_tensors;
+  //对ItemNode的每一个输出边循环
   for (size_t out_index = 0; out_index < num_output_edges; out_index++) {
     const EdgeInfo& e = edges[out_index];
+    //输出边指向的节点
     const int dst_id = e.dst_id;
     const NodeItem* dst_item = gview.node(dst_id);
+    //一个handle,用来从PendingCounts 结构里存取counts
+    //一个Iteration 维持一个PeningCounts 对象，用来保存NodeItem 在本次iteration 的
+    //pendingcount数据
     const PendingCounts::Handle dst_pending_id = dst_item->pending_id;
     const int src_slot = e.output_slot;
 
+    if(dst_item==nullptr) continue;//2019年11月14日孙汇洲添加
     // TODO(yuanbyu): We don't need this if we require the subgraph
     // given to an executor not to contain a sink node.
     if (dst_item->is_sink) continue;
@@ -2396,6 +2409,7 @@ void ExecutorState::FrameState::ActivateNodes(const NodeItem* item,
     // dst if this flag is true. This is needed to make the thread safety
     // analysis happy.
     const bool is_control_edge = (src_slot == Graph::kControlSlot);
+    //是否需要这个输入数据
     bool dst_need_input = !is_control_edge;
     if (dst_item->is_merge) {
       // A merge node is ready if all control inputs have arrived and either
@@ -2403,15 +2417,23 @@ void ExecutorState::FrameState::ActivateNodes(const NodeItem* item,
       // dead. For Merge, pending's LSB is set iff a live data input has
       // arrived.
       if (is_control_edge) {
+        //如果是控制边，pending 减去2，pending第一位有其他的用处
         iter_state->decrement_pending(dst_pending_id, 2);
         int count = iter_state->pending(dst_pending_id);
         int dead_cnt = iter_state->dead_count(dst_pending_id);
+        //两个输入都到齐了且都是dead
         dst_dead = (dead_cnt == dst_item->num_inputs);
+        //pending第一位用来标识是否有一个活的数据到了，其他位用来对控制边计数
+        //一个merge节点是ready,如果所有的控制边都到齐，
+        //两个输入到了一个alive(count == 0)或两个都是dead ((count == 1) && dst_dead)
         dst_ready = (count == 0) || ((count == 1) && dst_dead);
       } else {
+        //如果是数据边，而且有数据输入
         if ((*outputs)[src_slot].has_value) {
           // This is a live data input.
+          //先取出pending
           int count = iter_state->pending(dst_pending_id);
+          //把pending 的最低位清0
           iter_state->mark_live(dst_pending_id);
           // Only the first live edge sets the input and (potentially)
           // triggers execution. The low bit of count is set if and
@@ -2420,6 +2442,7 @@ void ExecutorState::FrameState::ActivateNodes(const NodeItem* item,
           // the first live input and there are no pending control
           // edges, i.e. count == 1.
           dst_ready = (count == 1);
+          //第一个数据输入设置数据，如果之前已经有一个数据输入了，就不需要拷贝数据
           dst_need_input = ((count & 0x1) == 1);
         } else {
           // This is a dead data input. Note that dst_node is dead if node is
@@ -2427,17 +2450,25 @@ void ExecutorState::FrameState::ActivateNodes(const NodeItem* item,
           // the untaken branch of a conditional.
           // TODO(yuanbyu): This is a bit hacky, but a good solution for
           // now.
+          //如果是一个dead 输入，deadcount 加1
           iter_state->increment_dead_count(dst_pending_id);
+          //取出deadcount
           const int dead_cnt = iter_state->dead_count(dst_pending_id);
+          //如果deadcount 和数据输入的个数相等或输入边的起始节点item 是一个enter
+          //这里对enter特殊考虑，是因为，如果一个whileloop 嵌套在一个cond里面，如果这个
+          //whileloop 在一个untaken 分支，那么这个whileloop 里的merge 连 enter 输入都是dead
+          //且没有其他的输入值到达。
           dst_dead = (dead_cnt == dst_item->num_inputs) || item->is_enter;
           dst_ready = (iter_state->pending(dst_pending_id) == 1) && dst_dead;
           dst_need_input = false;
         }
       }
     } else {
+      //如果是非merge 节点，判断是否是个dead 输入，对pendingcounts的dead 计数
       const bool increment_dead =
           (is_dead || (!is_control_edge && !(*outputs)[src_slot].has_value));
       int pending, dead;
+      //调整pendincounts,pending 减1，dead加1或不加1
       iter_state->adjust_for_activation(dst_pending_id, increment_dead,
                                         &pending, &dead);
       dst_dead = (dead > 0);
@@ -2445,17 +2476,20 @@ void ExecutorState::FrameState::ActivateNodes(const NodeItem* item,
     }
 
     if (dst_need_input) {
+      //如果需要数据，则把数据拷贝到iterationstate里相应的槽位
       const int dst_slot = e.input_slot;
       const int dst_loc = dst_item->input_start + dst_slot;
       if (e.is_last) {
+        //如果这是这个输出值的最后一个拷贝，直接移动拷贝
         input_tensors[dst_loc] = std::move((*outputs)[src_slot]);
       } else {
         input_tensors[dst_loc] = (*outputs)[src_slot];
       }
     }
-
+    // 如果dest 节点ready,构造一个tagednode,放入ready 队列。
+    //tagnode 是<ItemNode,iter,isdead>的三元组，标识一个节点的一次计算
     // Add dst to the ready queue if it's ready
-    if (dst_ready) {
+    if (dst_ready && ready!=nullptr) {//2019年11月14日孙汇洲添加ready!=nullptr
       if (dst_item->is_control_trigger) dst_dead = false;
       ready->push_back(TaggedNode(dst_item->node, this, iter, dst_dead));
       iter_state->outstanding_ops++;
