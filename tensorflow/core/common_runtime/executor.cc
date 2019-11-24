@@ -784,7 +784,7 @@ class ExecutorState {
   ~ExecutorState();
 
   void RunAsync(Executor::DoneCallback done);
-
+  
  private:
   // Either a tensor pointer (pass-by-reference) or a tensor (pass-by-value).
   // TODO(yuanbyu): A better way to do "has_value"?
@@ -1023,6 +1023,8 @@ class ExecutorState {
 
     // Lock ordering: ExecutorState.mu_ < mu.
     mutex mu;
+    //2019年11月24日孙汇洲添加，为了防止ActivateNodes方法重进入的问题
+    std::mutex mtx;
 
     void InitializeFrameInfo(const string& enter_name) {
       auto it_frame_info = executor->frame_info_.find(enter_name);
@@ -2376,6 +2378,7 @@ void ExecutorState::FrameState::ActivateNodes(const NodeItem* item,
                                               const bool is_dead, int64 iter,
                                               EntryVector* outputs,
                                               TaggedNodeSeq* ready) {
+  mtx.try_lock();
   //GraphView 和 NodeItem 分别表示计算图和图中的一个节点，
   //在计算图执行的过程中不会更改状态
   const GraphView& gview = executor->gview_;
@@ -2392,13 +2395,13 @@ void ExecutorState::FrameState::ActivateNodes(const NodeItem* item,
     //输出边指向的节点
     const int dst_id = e.dst_id;
     const NodeItem* dst_item = gview.node(dst_id);
+    if(dst_item==nullptr) continue;//2019年11月14日孙汇洲添加
     //一个handle,用来从PendingCounts 结构里存取counts
     //一个Iteration 维持一个PeningCounts 对象，用来保存NodeItem 在本次iteration 的
     //pendingcount数据
     const PendingCounts::Handle dst_pending_id = dst_item->pending_id;
     const int src_slot = e.output_slot;
 
-    if(dst_item==nullptr) continue;//2019年11月14日孙汇洲添加
     // TODO(yuanbyu): We don't need this if we require the subgraph
     // given to an executor not to contain a sink node.
     if (dst_item->is_sink) continue;
@@ -2495,6 +2498,7 @@ void ExecutorState::FrameState::ActivateNodes(const NodeItem* item,
       iter_state->outstanding_ops++;
     }
   }
+  mtx.unlock();
 }
 
 void ExecutorState::FrameState::ActivateNexts(const GraphView* gview,
